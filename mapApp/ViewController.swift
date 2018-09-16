@@ -106,7 +106,22 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
         let annotation = MKPointAnnotation()
         annotation.coordinate = coordinate
 
-        print(coordinate)
+        var locationPoint = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        
+        sleep(1/2)
+        Alamofire.request(url, method : .get).responseJSON {
+            
+        }
+        
+//        fetchCityAndCountry(from: locationPoint) { city, country, error in
+//            
+//            if (error == nil) {
+//                
+//                guard let city = city, let country = country, error == nil else { return }
+//                print(city + ", " + country)  // Rio de Janeiro, Brazil
+//                annotation.title = city
+//            }
+//        }
         
         mapView.removeAnnotations(mapView.annotations)
         mapView.addAnnotation(annotation)
@@ -119,6 +134,8 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
                        error)
         }
     }
+    
+    
     
     
     
