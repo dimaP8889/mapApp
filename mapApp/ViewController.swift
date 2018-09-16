@@ -8,10 +8,16 @@
 
 import UIKit
 import MapKit
+import Alamofire
+import SwiftyJSON
 
 class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
+    
+    let url = "https://maps.googleapis.com/maps/api/geocode/json"
+    
+    let api = "AIzaSyAErBHfVGGL-XVOj7LVOYHFeUJ0syYdOPc"
     
     let regionRadius: CLLocationDistance = 1000
     
@@ -99,44 +105,46 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
     // Handle tap on the map
     @objc func handleTap(gestureReconizer: UILongPressGestureRecognizer) {
 
+        
         let location = gestureReconizer.location(in: mapView)
         let coordinate = mapView.convert(location,toCoordinateFrom: mapView)
 
         // Add annotation:
         let annotation = MKPointAnnotation()
         annotation.coordinate = coordinate
-
-        var locationPoint = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
         
-        sleep(1/2)
-        Alamofire.request(url, method : .get).responseJSON {
-            
+        requestGeo(with: coordinate)
+    }
+    
+    func requestGeo(with coordinate: CLLocationCoordinate2D) {
+        
+        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        
+        let params:[String:String] = ["latlng" : "\(location.coordinate.latitude),\(location.coordinate.longitude)", "key" : api]
+        
+        Alamofire.request(url, method : .get, parameters : params).responseJSON {
+            response in
+            if response.result.isSuccess {
+                
+                let results : JSON = JSON(response.result.value!)
+                let cityName = results["results"][0]["address_components"][2]["long_name"].stringValue
+                self.setAnnotation(with: coordinate, and: cityName)
+            }
         }
+    }
+    
+    
+    func setAnnotation (with coordinate : CLLocationCoordinate2D, and cityName : String) {
         
-//        fetchCityAndCountry(from: locationPoint) { city, country, error in
-//            
-//            if (error == nil) {
-//                
-//                guard let city = city, let country = country, error == nil else { return }
-//                print(city + ", " + country)  // Rio de Janeiro, Brazil
-//                annotation.title = city
-//            }
-//        }
+        // Add annotation:
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = coordinate
+
+        annotation.title = cityName
         
         mapView.removeAnnotations(mapView.annotations)
         mapView.addAnnotation(annotation)
     }
-    
-    func fetchCityAndCountry(from location: CLLocation, completion: @escaping (_ city: String?, _ country:  String?, _ error: Error?) -> ()) {
-        CLGeocoder().reverseGeocodeLocation(location) { placemarks, error in
-            completion(placemarks?.first?.locality,
-                       placemarks?.first?.country,
-                       error)
-        }
-    }
-    
-    
-    
     
     
     // Check autorization
