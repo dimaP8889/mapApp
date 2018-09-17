@@ -11,13 +11,9 @@ import MapKit
 import Alamofire
 import SwiftyJSON
 
-class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
+class ViewController: UIViewController, UISearchBarDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
-    
-    let url = "https://maps.googleapis.com/maps/api/geocode/json"
-    
-    let api = "AIzaSyAErBHfVGGL-XVOj7LVOYHFeUJ0syYdOPc"
     
     let regionRadius: CLLocationDistance = 1000
     
@@ -32,23 +28,27 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
         super.viewDidLoad()
         
         guard let location = locationManager.location else { return }
-        centerMapOnLocation(location: location)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
         
+        centerMapOnLocation(location: location)
+        
+        //Create gesture Recognizer
         let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.handleTap(gestureReconizer:)))
+        
         gestureRecognizer.delegate = self as? UIGestureRecognizerDelegate
+        
+        //Add gesture Recognizer to Map View
         mapView.addGestureRecognizer(gestureRecognizer)
+        
         checkLocationAuthorizationStatus()
     }
     
+    //MARK: - get weather button pressed
     @IBAction func getWeatherButton(_ sender: Any) {
         
         performSegue(withIdentifier: "Weather", sender: self)
     }
     
+    //MARK: - prepare for segue to Weather
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "Weather" {
         
@@ -58,7 +58,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
         }
     }
     
-    // Search button Pressed
+    //MARK: - Search button Pressed in NavigationController Bar
     @IBAction func searchButton(_ sender: Any) {
         
         let searchController = UISearchController(searchResultsController: nil)
@@ -68,17 +68,8 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
         
     }
     
-    // Search button Ckicked Search
+    //MARK: Search button Clicked Search
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        
-        //Activity indicator
-        let activityIndicator = UIActivityIndicatorView()
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
-        activityIndicator.center = self.view.center
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.startAnimating()
-        
-        self.view.addSubview(activityIndicator)
         
         //Hide searchbar
         searchBar.resignFirstResponder()
@@ -90,12 +81,11 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
         
         let activeSearch = MKLocalSearch(request: searchRequest)
         
-        activityIndicator.stopAnimating()
+        //start Search on map
         activeSearch.start { (response, error) in
             if error != nil {
                 print("ERROR")
             } else {
-                
                 
                 // Remove annotations
                 self.mapView.removeAnnotations(self.mapView.annotations)
@@ -103,16 +93,16 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
                 //Getting data
                 let latitude = response?.boundingRegion.center.latitude
                 let longitude = response?.boundingRegion.center.longitude
+                let coordinate:CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
+                
                 
                 //Create annotation
-                let annotation = MKPointAnnotation()
-                annotation.title = searchBar.text
-                annotation.coordinate = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
+                self.setAnnotation(with : coordinate)
                 
-                self.mapView.addAnnotation(annotation)
+                //send API requst
+                self.getTemparature(with: coordinate)
                 
                 //Zoom in on annotation
-                let coordinate:CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
                 let span = MKCoordinateSpanMake(0.1, 0.1)
                 let region = MKCoordinateRegion(center: coordinate, span: span)
 
@@ -121,83 +111,42 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
         }
     }
     
-    // Handle tap on the map
+   //MARK: - Handle tap on the map
     @objc func handleTap(gestureReconizer: UILongPressGestureRecognizer) {
 
-        
+
         let location = gestureReconizer.location(in: mapView)
         let coordinate = mapView.convert(location,toCoordinateFrom: mapView)
 
         // Add annotation:
         let annotation = MKPointAnnotation()
         annotation.coordinate = coordinate
-        
-        requestGeo(with: coordinate)
+
+        getTemparature(with: coordinate)
     }
     
-    //request Geo from Google
-    func requestGeo(with coordinate: CLLocationCoordinate2D) {
+    //MARK: - Send API requst to get temperature
+    func getTemparature(with coortdinates : CLLocationCoordinate2D) {
         
-        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        let params : [String : String] = ["lat" : "\(coortdinates.latitude)", "lon" : "\(coortdinates.longitude)", "appid" : APP_ID]
+        weatherData.getWeatherData(url: WEATHER_URL, parameters: params)
         
-        let params:[String:String] = ["latlng" : "\(location.coordinate.latitude),\(location.coordinate.longitude)", "key" : api]
-        
-        Alamofire.request(url, method : .get, parameters : params).responseJSON {
-            response in
-            if response.result.isSuccess {
-                
-                let results : JSON = JSON(response.result.value!)
-                
-                self.getInfo(with: results)
-                
-                self.setAnnotation(with: coordinate)
-            }
-        }
+        setAnnotation(with: coortdinates)
     }
     
-    func getInfo(with results: JSON) {
-        
-        var nameSearch = ["locality", "administrative_area_level_1", "administrative_area_level_2", "administrative_area_level_3", "country"]
-        let numOfRes = results["results"][0]["address_components"].count
-        
-        for j in 0...nameSearch.count - 1 {
-            
-            if (numOfRes > 0) {
-                for i in 0...numOfRes {
-                    
-                    if results["results"][0]["address_components"][i]["types"][0].string == nameSearch[j] {
-                        
-                        let name = results["results"][0]["address_components"][i]["long_name"].stringValue
-                        let params : [String : String] = ["q" : name, "appid" : APP_ID]
-                        
-                        weatherData.getWeatherData(url: WEATHER_URL, parameters: params)
-                    }
-                }
-                if (weatherData.gotInfo) {
-                    break
-                }
-            } else {
-                weatherData.city = ""
-            }
-        }
-    }
-    
-    
+    //MARK: - set annitation to map
     func setAnnotation (with coordinate : CLLocationCoordinate2D) {
         
         // Add annotation:
         let annotation = MKPointAnnotation()
         annotation.coordinate = coordinate
-
-        
-        annotation.title = weatherData.city
         
         mapView.removeAnnotations(mapView.annotations)
         mapView.addAnnotation(annotation)
     }
     
     
-    // Check autorization
+    //MARK: - Check autorization
     func checkLocationAuthorizationStatus() {
         if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
             mapView.showsUserLocation = true
@@ -205,13 +154,12 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
             locationManager.requestWhenInUseAuthorization()
         }
     }
-    
-    // Center your location
+
+    //MARK: - Center your location
     func centerMapOnLocation(location: CLLocation) {
 
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(location.coordinate,
                                                                   regionRadius, regionRadius)
         mapView.setRegion(coordinateRegion, animated: true)
     }
-
 }

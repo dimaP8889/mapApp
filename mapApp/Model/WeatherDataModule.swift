@@ -12,14 +12,12 @@ import SwiftyJSON
 
 class WeatherDataModel {
     
-    //Declare your model variables here
+    //Declare model variables here
     
     var temperature = 0
     var condition = 0
     var city = ""
     var weatherIconName = ""
-    
-    var gotInfo = true
     
     //This method turns a condition code into the name of the weather condition image
     
@@ -82,7 +80,6 @@ class WeatherDataModel {
             else {
                 print("Error \(String(describing: response.result.error))")
                 self.city = ""
-                self.gotInfo = false
             }
         }
     }
@@ -103,9 +100,6 @@ class WeatherDataModel {
             self.condition = json["weather"][0]["id"].intValue
             
             self.weatherIconName = self.updateWeatherIcon(condition: self.condition)
-        }
-        else {
-            self.gotInfo = false
         }
     }
 }

@@ -38,7 +38,7 @@ class TemperatureViewController: UIViewController {
         if (weatherDataModule.city != ""){
             cityLabel.text = weatherDataModule.city
         } else {
-            cityLabel.text = "Unavaible"
+            cityLabel.text = ""
         }
         temperatureLabel.text = String(weatherDataModule.temperature) + "°"
         weatherIcon.image = UIImage(named: weatherDataModule.weatherIconName)
