@@ -12,6 +12,15 @@ import Alamofire
 import SwiftyJSON
 import SVProgressHUD
 import SystemConfiguration
+import Foundation
+
+struct Platform {
+    
+    static var isSimulator: Bool {
+        return TARGET_OS_SIMULATOR != 0
+    }
+    
+}
 
 class ViewController: UIViewController, UISearchBarDelegate {
 
@@ -42,10 +51,22 @@ class ViewController: UIViewController, UISearchBarDelegate {
     //MARK: - get weather button pressed
     @IBAction func getWeatherButton(_ sender: Any) {
         
+        // Check if it's simulator or device
+        let num = Platform.isSimulator ? 0 : 1
+        checkAnnotationsNum(num: num)
+        
         if (NetworkReachabilityManager()!.isReachable) {
             performSegue(withIdentifier: "Weather", sender: self)
         } else {
             present(self.alert.showConnectionAlert(), animated: true, completion: nil)
+        }
+    }
+    
+    //MARK: - check number of annotations
+    func checkAnnotationsNum(num : Int) {
+        
+        if mapView.annotations.count == num {
+            present(self.alert.showAnnotationAlert(), animated: true, completion: nil)
         }
     }
     

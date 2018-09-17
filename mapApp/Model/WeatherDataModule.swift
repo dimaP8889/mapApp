@@ -80,7 +80,7 @@ class WeatherDataModel {
             }
             else {
                 print("Error \(String(describing: response.result.error))")
-                self.city = ""
+                self.city = "City Unavaible"
                 SVProgressHUD.dismiss()
             }
         }
