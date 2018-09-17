@@ -10,6 +10,7 @@ import UIKit
 import MapKit
 import Alamofire
 import SwiftyJSON
+import SVProgressHUD
 
 class ViewController: UIViewController, UISearchBarDelegate {
 
@@ -75,6 +76,9 @@ class ViewController: UIViewController, UISearchBarDelegate {
         searchBar.resignFirstResponder()
         dismiss(animated: true, completion: nil)
         
+        //Show progress Bar
+        SVProgressHUD.show()
+        
         //Create search request
         let searchRequest = MKLocalSearchRequest()
         searchRequest.naturalLanguageQuery = searchBar.text
@@ -85,6 +89,7 @@ class ViewController: UIViewController, UISearchBarDelegate {
         activeSearch.start { (response, error) in
             if error != nil {
                 print("ERROR")
+                SVProgressHUD.dismiss()
             } else {
                 
                 // Remove annotations
@@ -101,6 +106,7 @@ class ViewController: UIViewController, UISearchBarDelegate {
                 
                 //send API requst
                 self.getTemparature(with: coordinate)
+                SVProgressHUD.dismiss()
                 
                 //Zoom in on annotation
                 let span = MKCoordinateSpanMake(0.1, 0.1)

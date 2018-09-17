@@ -8,5 +8,6 @@ target 'mapApp' do
   # Pods for mapApp
   pod 'Alamofire'
   pod 'SwiftyJSON'
+  pod 'SVProgressHUD'
 
 end
