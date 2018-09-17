@@ -21,6 +21,8 @@ class ViewController: UIViewController, UISearchBarDelegate {
     
     let weatherData = WeatherDataModel()
     
+    var alert = Alerts()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -30,22 +32,23 @@ class ViewController: UIViewController, UISearchBarDelegate {
         
         //Create gesture Recognizer
         let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.handleTap(gestureReconizer:)))
-        
         gestureRecognizer.delegate = self as? UIGestureRecognizerDelegate
         
         //Add gesture Recognizer to Map View
         mapView.addGestureRecognizer(gestureRecognizer)
-        
         checkLocationAuthorizationStatus()
     }
     
     //MARK: - get weather button pressed
     @IBAction func getWeatherButton(_ sender: Any) {
         
-        if (NetworkReachabilityManager()!.isReachable) {
+        print(mapView.annotations.count)
+        if (mapView.annotations.count == 1) {
+            present(self.alert.showAnnotationAlert(), animated: true, completion: nil)
+        } else if (NetworkReachabilityManager()!.isReachable) {
             performSegue(withIdentifier: "Weather", sender: self)
         } else {
-            showAlert()
+            present(self.alert.showConnectionAlert(), animated: true, completion: nil)
         }
     }
     
@@ -89,7 +92,7 @@ class ViewController: UIViewController, UISearchBarDelegate {
         activeSearch.start { (response, error) in
             if error != nil {
                 
-                self.showAlert()
+                self.present(self.alert.showConnectionAlert(), animated: true, completion: nil)
                 SVProgressHUD.dismiss()
             } else {
                 
@@ -107,7 +110,6 @@ class ViewController: UIViewController, UISearchBarDelegate {
                 
                 //send API requst
                 self.getTemparature(with: coordinate)
-                SVProgressHUD.dismiss()
                 
                 //Zoom in on annotation
                 let span = MKCoordinateSpanMake(0.1, 0.1)
@@ -117,20 +119,6 @@ class ViewController: UIViewController, UISearchBarDelegate {
             }
         }
     }
-    
-    
-    //MARK: Show alert bad connection
-    func showAlert() {
-        
-        let alert = UIAlertController(title: "Connection Error", message: "Check your internet connection", preferredStyle: .alert)
-        
-        let action = UIAlertAction(title: "OK", style: .default)
-        
-        alert.addAction(action)
-        
-        present(alert, animated: true, completion: nil)
-    }
-    
     
    //MARK: - Handle tap on the map
     @objc func handleTap(gestureReconizer: UILongPressGestureRecognizer) {
@@ -154,6 +142,7 @@ class ViewController: UIViewController, UISearchBarDelegate {
         
         let params : [String : String] = ["lat" : "\(coortdinates.latitude)", "lon" : "\(coortdinates.longitude)", "appid" : APP_ID]
         
+        SVProgressHUD.show()
         weatherData.getWeatherData(url: WEATHER_URL, parameters: params)
         
         setAnnotation(with: coortdinates)

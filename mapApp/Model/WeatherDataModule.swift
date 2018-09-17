@@ -9,6 +9,7 @@
 import UIKit
 import Alamofire
 import SwiftyJSON
+import SVProgressHUD
 
 class WeatherDataModel {
     
@@ -80,6 +81,7 @@ class WeatherDataModel {
             else {
                 print("Error \(String(describing: response.result.error))")
                 self.city = ""
+                SVProgressHUD.dismiss()
             }
         }
     }
@@ -100,6 +102,9 @@ class WeatherDataModel {
             self.condition = json["weather"][0]["id"].intValue
             
             self.weatherIconName = self.updateWeatherIcon(condition: self.condition)
+            SVProgressHUD.dismiss()
+        } else {
+            SVProgressHUD.dismiss()
         }
     }
 }

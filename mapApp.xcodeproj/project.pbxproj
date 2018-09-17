@@ -12,6 +12,7 @@
 		F4014F88214C4ECD00317B87 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4014F87214C4ECD00317B87 /* ViewController.swift */; };
 		F4014F8D214C4ED100317B87 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4014F8C214C4ED100317B87 /* Assets.xcassets */; };
 		F4014F90214C4ED100317B87 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4014F8E214C4ED100317B87 /* LaunchScreen.storyboard */; };
+		F41EC840215018FF001FEB58 /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EC83F215018FF001FEB58 /* Alerts.swift */; };
 		F422D034214EF2CF00DCD21D /* TemperatureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F422D033214EF2CF00DCD21D /* TemperatureViewController.swift */; };
 		F4491BE7214D0B3E000AA2EF /* WeatherForecastButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4491BE6214D0B3E000AA2EF /* WeatherForecastButton.swift */; };
 		F4491BED214D0EB7000AA2EF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4491BEC214D0EB6000AA2EF /* Main.storyboard */; };
@@ -28,6 +29,7 @@
 		F4014F8C214C4ED100317B87 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F4014F8F214C4ED100317B87 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F4014F91214C4ED100317B87 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F41EC83F215018FF001FEB58 /* Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
 		F422D033214EF2CF00DCD21D /* TemperatureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemperatureViewController.swift; sourceTree = "<group>"; };
 		F4491BE6214D0B3E000AA2EF /* WeatherForecastButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherForecastButton.swift; sourceTree = "<group>"; };
 		F4491BEC214D0EB6000AA2EF /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				F47B1827214E8556004A8827 /* WeatherDataModule.swift */,
+				F41EC83F215018FF001FEB58 /* Alerts.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -246,6 +249,7 @@
 				F4491BE7214D0B3E000AA2EF /* WeatherForecastButton.swift in Sources */,
 				F47B1828214E8556004A8827 /* WeatherDataModule.swift in Sources */,
 				F4014F86214C4ECD00317B87 /* AppDelegate.swift in Sources */,
+				F41EC840215018FF001FEB58 /* Alerts.swift in Sources */,
 				F422D034214EF2CF00DCD21D /* TemperatureViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
