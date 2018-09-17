@@ -12,8 +12,10 @@
 		F4014F88214C4ECD00317B87 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4014F87214C4ECD00317B87 /* ViewController.swift */; };
 		F4014F8D214C4ED100317B87 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4014F8C214C4ED100317B87 /* Assets.xcassets */; };
 		F4014F90214C4ED100317B87 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4014F8E214C4ED100317B87 /* LaunchScreen.storyboard */; };
-		F4491BE7214D0B3E000AA2EF /* ZoomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4491BE6214D0B3E000AA2EF /* ZoomButton.swift */; };
+		F422D034214EF2CF00DCD21D /* TemperatureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F422D033214EF2CF00DCD21D /* TemperatureViewController.swift */; };
+		F4491BE7214D0B3E000AA2EF /* WeatherForecastButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4491BE6214D0B3E000AA2EF /* WeatherForecastButton.swift */; };
 		F4491BED214D0EB7000AA2EF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4491BEC214D0EB6000AA2EF /* Main.storyboard */; };
+		F47B1828214E8556004A8827 /* WeatherDataModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47B1827214E8556004A8827 /* WeatherDataModule.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,8 +28,10 @@
 		F4014F8C214C4ED100317B87 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F4014F8F214C4ED100317B87 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F4014F91214C4ED100317B87 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F4491BE6214D0B3E000AA2EF /* ZoomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomButton.swift; sourceTree = "<group>"; };
+		F422D033214EF2CF00DCD21D /* TemperatureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemperatureViewController.swift; sourceTree = "<group>"; };
+		F4491BE6214D0B3E000AA2EF /* WeatherForecastButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherForecastButton.swift; sourceTree = "<group>"; };
 		F4491BEC214D0EB6000AA2EF /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		F47B1827214E8556004A8827 /* WeatherDataModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDataModule.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,11 +77,10 @@
 			isa = PBXGroup;
 			children = (
 				F4014F85214C4ECD00317B87 /* AppDelegate.swift */,
-				F4014F87214C4ECD00317B87 /* ViewController.swift */,
-				F4491BE6214D0B3E000AA2EF /* ZoomButton.swift */,
+				F422D035214F822800DCD21D /* Model */,
+				F422D036214F823A00DCD21D /* View */,
+				F422D037214F824200DCD21D /* Controller */,
 				F4014F8C214C4ED100317B87 /* Assets.xcassets */,
-				F4014F8E214C4ED100317B87 /* LaunchScreen.storyboard */,
-				F4491BEC214D0EB6000AA2EF /* Main.storyboard */,
 				F4014F91214C4ED100317B87 /* Info.plist */,
 			);
 			path = mapApp;
@@ -89,6 +92,33 @@
 				09AE4000C9E99336C06632D9 /* Pods_mapApp.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F422D035214F822800DCD21D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F47B1827214E8556004A8827 /* WeatherDataModule.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		F422D036214F823A00DCD21D /* View */ = {
+			isa = PBXGroup;
+			children = (
+				F4491BE6214D0B3E000AA2EF /* WeatherForecastButton.swift */,
+				F4491BEC214D0EB6000AA2EF /* Main.storyboard */,
+				F4014F8E214C4ED100317B87 /* LaunchScreen.storyboard */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		F422D037214F824200DCD21D /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				F422D033214EF2CF00DCD21D /* TemperatureViewController.swift */,
+				F4014F87214C4ECD00317B87 /* ViewController.swift */,
+			);
+			path = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -211,8 +241,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				F4014F88214C4ECD00317B87 /* ViewController.swift in Sources */,
-				F4491BE7214D0B3E000AA2EF /* ZoomButton.swift in Sources */,
+				F4491BE7214D0B3E000AA2EF /* WeatherForecastButton.swift in Sources */,
+				F47B1828214E8556004A8827 /* WeatherDataModule.swift in Sources */,
 				F4014F86214C4ECD00317B87 /* AppDelegate.swift in Sources */,
+				F422D034214EF2CF00DCD21D /* TemperatureViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

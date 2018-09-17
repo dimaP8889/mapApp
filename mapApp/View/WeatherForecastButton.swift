@@ -8,11 +8,11 @@
 
 import UIKit
 
-class ZoomButton: UIButton {
+class WeatherForecastButton: UIButton {
     
     override func awakeFromNib() {
         layer.borderWidth = 2
-        layer.cornerRadius = 10
+        layer.cornerRadius = 25
         layer.borderColor = UIColor.black.cgColor
     }
 }

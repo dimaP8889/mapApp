@@ -23,6 +23,11 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
     
     var locationManager = CLLocationManager.init()
     
+    let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
+    let APP_ID = "e72ca729af228beabd5d20e3b7749713"
+    
+    let weatherData = WeatherDataModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -37,6 +42,20 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
         gestureRecognizer.delegate = self as? UIGestureRecognizerDelegate
         mapView.addGestureRecognizer(gestureRecognizer)
         checkLocationAuthorizationStatus()
+    }
+    
+    @IBAction func getWeatherButton(_ sender: Any) {
+        
+        performSegue(withIdentifier: "Weather", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "Weather" {
+        
+            let weatherViewController = segue.destination as! TemperatureViewController
+            
+            weatherViewController.weatherDataModule = self.weatherData
+        }
     }
     
     // Search button Pressed
@@ -116,6 +135,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
         requestGeo(with: coordinate)
     }
     
+    //request Geo from Google
     func requestGeo(with coordinate: CLLocationCoordinate2D) {
         
         let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
@@ -127,20 +147,50 @@ class ViewController: UIViewController, MKMapViewDelegate, UISearchBarDelegate {
             if response.result.isSuccess {
                 
                 let results : JSON = JSON(response.result.value!)
-                let cityName = results["results"][0]["address_components"][2]["long_name"].stringValue
-                self.setAnnotation(with: coordinate, and: cityName)
+                
+                self.getInfo(with: results)
+                
+                self.setAnnotation(with: coordinate)
+            }
+        }
+    }
+    
+    func getInfo(with results: JSON) {
+        
+        var nameSearch = ["locality", "administrative_area_level_1", "administrative_area_level_2", "administrative_area_level_3", "country"]
+        let numOfRes = results["results"][0]["address_components"].count
+        
+        for j in 0...nameSearch.count - 1 {
+            
+            if (numOfRes > 0) {
+                for i in 0...numOfRes {
+                    
+                    if results["results"][0]["address_components"][i]["types"][0].string == nameSearch[j] {
+                        
+                        let name = results["results"][0]["address_components"][i]["long_name"].stringValue
+                        let params : [String : String] = ["q" : name, "appid" : APP_ID]
+                        
+                        weatherData.getWeatherData(url: WEATHER_URL, parameters: params)
+                    }
+                }
+                if (weatherData.gotInfo) {
+                    break
+                }
+            } else {
+                weatherData.city = ""
             }
         }
     }
     
     
-    func setAnnotation (with coordinate : CLLocationCoordinate2D, and cityName : String) {
+    func setAnnotation (with coordinate : CLLocationCoordinate2D) {
         
         // Add annotation:
         let annotation = MKPointAnnotation()
         annotation.coordinate = coordinate
 
-        annotation.title = cityName
+        
+        annotation.title = weatherData.city
         
         mapView.removeAnnotations(mapView.annotations)
         mapView.addAnnotation(annotation)
