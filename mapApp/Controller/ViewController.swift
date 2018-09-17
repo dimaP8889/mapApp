@@ -42,10 +42,7 @@ class ViewController: UIViewController, UISearchBarDelegate {
     //MARK: - get weather button pressed
     @IBAction func getWeatherButton(_ sender: Any) {
         
-        print(mapView.annotations.count)
-        if (mapView.annotations.count == 1) {
-            present(self.alert.showAnnotationAlert(), animated: true, completion: nil)
-        } else if (NetworkReachabilityManager()!.isReachable) {
+        if (NetworkReachabilityManager()!.isReachable) {
             performSegue(withIdentifier: "Weather", sender: self)
         } else {
             present(self.alert.showConnectionAlert(), animated: true, completion: nil)
