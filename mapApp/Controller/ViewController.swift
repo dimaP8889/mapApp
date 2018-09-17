@@ -87,7 +87,6 @@ class ViewController: UIViewController, UISearchBarDelegate {
         
         //Show progress Bar
         SVProgressHUD.show()
-        view.isUserInteractionEnabled = false
         
         //Create search request
         let searchRequest = MKLocalSearchRequest()
