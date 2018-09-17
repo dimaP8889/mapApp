@@ -14,14 +14,6 @@ import SVProgressHUD
 import SystemConfiguration
 import Foundation
 
-struct Platform {
-    
-    static var isSimulator: Bool {
-        return TARGET_OS_SIMULATOR != 0
-    }
-    
-}
-
 class ViewController: UIViewController, UISearchBarDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
@@ -29,6 +21,8 @@ class ViewController: UIViewController, UISearchBarDelegate {
     var locationManager = CLLocationManager.init()
     
     let weatherData = WeatherDataModel()
+    
+    var checkIfDot = false
     
     var alert = Alerts()
     
@@ -51,22 +45,16 @@ class ViewController: UIViewController, UISearchBarDelegate {
     //MARK: - get weather button pressed
     @IBAction func getWeatherButton(_ sender: Any) {
         
-        // Check if it's simulator or device
-        let num = Platform.isSimulator ? 0 : 1
-        checkAnnotationsNum(num: num)
+        // Check if annotation appeared
+        if (!checkIfDot) {
+            present(self.alert.showAnnotationAlert(), animated: true, completion: nil)
+        }
         
+        // Check internet connection
         if (NetworkReachabilityManager()!.isReachable) {
             performSegue(withIdentifier: "Weather", sender: self)
         } else {
             present(self.alert.showConnectionAlert(), animated: true, completion: nil)
-        }
-    }
-    
-    //MARK: - check number of annotations
-    func checkAnnotationsNum(num : Int) {
-        
-        if mapView.annotations.count == num {
-            present(self.alert.showAnnotationAlert(), animated: true, completion: nil)
         }
     }
     
@@ -99,6 +87,7 @@ class ViewController: UIViewController, UISearchBarDelegate {
         
         //Show progress Bar
         SVProgressHUD.show()
+        view.isUserInteractionEnabled = false
         
         //Create search request
         let searchRequest = MKLocalSearchRequest()
@@ -127,7 +116,7 @@ class ViewController: UIViewController, UISearchBarDelegate {
                 self.setAnnotation(with : coordinate)
                 
                 //send API requst
-                self.getTemparature(with: coordinate)
+                self.getTemperature(with: coordinate)
                 
                 //Zoom in on annotation
                 let span = MKCoordinateSpanMake(0.1, 0.1)
@@ -149,18 +138,17 @@ class ViewController: UIViewController, UISearchBarDelegate {
         let annotation = MKPointAnnotation()
         annotation.coordinate = coordinate
 
-        getTemparature(with: coordinate)
+        getTemperature(with: coordinate)
     }
     
     //MARK: - Send API requst to get temperature
-    func getTemparature(with coortdinates : CLLocationCoordinate2D) {
+    func getTemperature(with coortdinates : CLLocationCoordinate2D) {
         
         let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
         let APP_ID = "e72ca729af228beabd5d20e3b7749713"
         
         let params : [String : String] = ["lat" : "\(coortdinates.latitude)", "lon" : "\(coortdinates.longitude)", "appid" : APP_ID]
         
-        SVProgressHUD.show()
         weatherData.getWeatherData(url: WEATHER_URL, parameters: params)
         
         setAnnotation(with: coortdinates)
@@ -171,6 +159,8 @@ class ViewController: UIViewController, UISearchBarDelegate {
         
         // Add annotation:
         let annotation = MKPointAnnotation()
+        
+        checkIfDot = true
         annotation.coordinate = coordinate
         
         mapView.removeAnnotations(mapView.annotations)
