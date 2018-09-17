@@ -11,17 +11,13 @@ import MapKit
 import Alamofire
 import SwiftyJSON
 import SVProgressHUD
+import SystemConfiguration
 
 class ViewController: UIViewController, UISearchBarDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
     
-    let regionRadius: CLLocationDistance = 1000
-    
     var locationManager = CLLocationManager.init()
-    
-    let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
-    let APP_ID = "e72ca729af228beabd5d20e3b7749713"
     
     let weatherData = WeatherDataModel()
     
@@ -46,7 +42,11 @@ class ViewController: UIViewController, UISearchBarDelegate {
     //MARK: - get weather button pressed
     @IBAction func getWeatherButton(_ sender: Any) {
         
-        performSegue(withIdentifier: "Weather", sender: self)
+        if (NetworkReachabilityManager()!.isReachable) {
+            performSegue(withIdentifier: "Weather", sender: self)
+        } else {
+            showAlert()
+        }
     }
     
     //MARK: - prepare for segue to Weather
@@ -88,7 +88,8 @@ class ViewController: UIViewController, UISearchBarDelegate {
         //start Search on map
         activeSearch.start { (response, error) in
             if error != nil {
-                print("ERROR")
+                
+                self.showAlert()
                 SVProgressHUD.dismiss()
             } else {
                 
@@ -117,6 +118,20 @@ class ViewController: UIViewController, UISearchBarDelegate {
         }
     }
     
+    
+    //MARK: Show alert bad connection
+    func showAlert() {
+        
+        let alert = UIAlertController(title: "Connection Error", message: "Check your internet connection", preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "OK", style: .default)
+        
+        alert.addAction(action)
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
+    
    //MARK: - Handle tap on the map
     @objc func handleTap(gestureReconizer: UILongPressGestureRecognizer) {
 
@@ -134,7 +149,11 @@ class ViewController: UIViewController, UISearchBarDelegate {
     //MARK: - Send API requst to get temperature
     func getTemparature(with coortdinates : CLLocationCoordinate2D) {
         
+        let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
+        let APP_ID = "e72ca729af228beabd5d20e3b7749713"
+        
         let params : [String : String] = ["lat" : "\(coortdinates.latitude)", "lon" : "\(coortdinates.longitude)", "appid" : APP_ID]
+        
         weatherData.getWeatherData(url: WEATHER_URL, parameters: params)
         
         setAnnotation(with: coortdinates)
@@ -163,7 +182,8 @@ class ViewController: UIViewController, UISearchBarDelegate {
 
     //MARK: - Center your location
     func centerMapOnLocation(location: CLLocation) {
-
+        
+        let regionRadius: CLLocationDistance = 1000
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(location.coordinate,
                                                                   regionRadius, regionRadius)
         mapView.setRegion(coordinateRegion, animated: true)
