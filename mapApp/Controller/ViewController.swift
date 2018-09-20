@@ -38,13 +38,11 @@ class ViewController: UIViewController, UISearchBarDelegate {
         checkLocationAuthorizationStatus()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        
+    @IBAction func LocationFinder(_ sender: Any) {
         guard let location = locationManager.location else { return }
         
         centerMapOnLocation(location: location)
     }
-    
     
     //MARK: - get weather button pressed
     @IBAction func getWeatherButton(_ sender: Any) {
@@ -93,7 +91,7 @@ class ViewController: UIViewController, UISearchBarDelegate {
         SVProgressHUD.show()
         
         //Create search request
-        let searchRequest = MKLocalSearchRequest()
+        let searchRequest = MKLocalSearch.Request()
         searchRequest.naturalLanguageQuery = searchBar.text
         
         let activeSearch = MKLocalSearch(request: searchRequest)
@@ -122,7 +120,7 @@ class ViewController: UIViewController, UISearchBarDelegate {
                 self.getTemperature(with: coordinate)
                 
                 //Zoom in on annotation
-                let span = MKCoordinateSpanMake(0.1, 0.1)
+                let span = MKCoordinateSpan.init(latitudeDelta: 0.1, longitudeDelta: 0.1)
                 let region = MKCoordinateRegion(center: coordinate, span: span)
 
                 self.mapView.setRegion(region, animated: true)
@@ -184,8 +182,8 @@ class ViewController: UIViewController, UISearchBarDelegate {
     func centerMapOnLocation(location: CLLocation) {
         
         let regionRadius: CLLocationDistance = 1000
-        let coordinateRegion = MKCoordinateRegionMakeWithDistance(location.coordinate,
-                                                                  regionRadius, regionRadius)
+        let coordinateRegion = MKCoordinateRegion.init(center: location.coordinate,
+                                                                  latitudinalMeters: regionRadius, longitudinalMeters: regionRadius)
         mapView.setRegion(coordinateRegion, animated: true)
     }
 }
