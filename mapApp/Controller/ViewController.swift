@@ -29,10 +29,6 @@ class ViewController: UIViewController, UISearchBarDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let location = locationManager.location else { return }
-        
-        centerMapOnLocation(location: location)
-        
         //Create gesture Recognizer
         let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.handleTap(gestureReconizer:)))
         gestureRecognizer.delegate = self as? UIGestureRecognizerDelegate
@@ -41,6 +37,14 @@ class ViewController: UIViewController, UISearchBarDelegate {
         mapView.addGestureRecognizer(gestureRecognizer)
         checkLocationAuthorizationStatus()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        
+        guard let location = locationManager.location else { return }
+        
+        centerMapOnLocation(location: location)
+    }
+    
     
     //MARK: - get weather button pressed
     @IBAction func getWeatherButton(_ sender: Any) {
